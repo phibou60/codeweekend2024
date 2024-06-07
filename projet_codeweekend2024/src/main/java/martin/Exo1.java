@@ -13,7 +13,7 @@ public class Exo1 {
     private static final String DEV = "martin";
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-    
+
     public static void main(String[] args) throws Exception {
         new Exo1().run();
     }
@@ -21,8 +21,7 @@ public class Exo1 {
     public void run() throws Exception {
 
         for (int i = 1; i < 2; i++) {
-            URL url = this.getClass().getClassLoader().getResource(EXO + "/input/" + i + ".txt");
-            //List<String> input = Files.readAllLines(Paths.get(uri), Charset.defaultCharset());
+            URL url = this.getClass().getClassLoader().getResource(String.format("%s/input/%03d.json", EXO, i));
 
             System.out.println("-------------------------------------------------------------");
             System.out.println("Test case " + i + ":");
