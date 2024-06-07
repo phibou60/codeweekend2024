@@ -1,21 +1,18 @@
 package martin;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URL;
 
-import commons.GameState;
-import commons.Response;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import commons.model.Attack;
+import commons.model.GameInput;
+import commons.model.Move;
+import commons.model.Moves;
 
 public class Exo1 {
     private static final String EXO = "exo1";
     private static final String DEV = "martin";
+
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     
     public static void main(String[] args) throws Exception {
         new Exo1().run();
@@ -23,34 +20,30 @@ public class Exo1 {
     
     public void run() throws Exception {
 
-        for (int i = 1; i <= 2; i++) {
-            URI uri = this.getClass().getClassLoader().getResource(EXO + "/input/" + i + ".txt").toURI();
-            List<String> input = Files.readAllLines(Paths.get(uri), Charset.defaultCharset());
+        for (int i = 1; i < 2; i++) {
+            URL url = this.getClass().getClassLoader().getResource(EXO + "/input/" + i + ".txt");
+            //List<String> input = Files.readAllLines(Paths.get(uri), Charset.defaultCharset());
 
             System.out.println("-------------------------------------------------------------");
             System.out.println("Test case " + i + ":");
-            System.out.println(input);
-            
-            GameState gameState = GameState.parse(input);
-            Response response = getBestResponse(gameState);
+
+            GameInput input = JSON_MAPPER.readValue(url, GameInput.class);
+            Moves response = getBestResponse(input);
 
             // TODO : écrire le résultat quelque part sur disque
-            
-            System.out.println("Soumission :");
-            response.getSubmission().forEach(System.out::println);
-            
-            System.out.println("Score : " + response.getScore());
+            String submission = JSON_MAPPER.writeValueAsString(response);
+            System.out.println("Soumission :\n" + submission);
+            System.out.println("Score :" + response.getScore());
         }
 
     }
 
-    Response getBestResponse(GameState gameState) {
-        
-        List<String> submission = new ArrayList<>();
-        submission.add("nb lines: " + gameState.lines.size());
-        int score = gameState.lines.size();
-        
-        return new Response(submission, score);
+    Moves getBestResponse(GameInput input) {
+        Moves response = new Moves();
+        response.getMoves().add(new Move(60, 50));
+        response.getMoves().add(new Attack(0));
+        response.setScore(10);
+        return response;
     }
     
 }
