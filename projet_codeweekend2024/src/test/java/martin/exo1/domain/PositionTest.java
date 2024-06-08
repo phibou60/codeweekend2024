@@ -10,13 +10,13 @@ public class PositionTest {
 
     @Test
     void should_move_partial_distance_to_target() {
-        Position start = new Position(0, 0);
-        Position target = new Position(20, 30);
+        Position start = new Position(62, 53);
+        Position target = new Position(81, 56);
 
         Position result = start.moveToward(target, 10);
 
-        assertEquals(5, result.x());
-        assertEquals(8, result.y());
+        assertEquals(71, result.x());
+        assertEquals(54, result.y());
     }
 
     @Test

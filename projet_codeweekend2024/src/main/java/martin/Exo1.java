@@ -5,7 +5,8 @@ import java.net.URL;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.model.GameInput;
 import commons.model.Moves;
-import martin.exo1.BasicBFS;
+import martin.exo1.AI001BasicBFS;
+import martin.exo1.AI002AttackNearestMonster;
 
 public class Exo1 {
     private static final String EXO = "exo1";
@@ -19,7 +20,7 @@ public class Exo1 {
     
     public void run() throws Exception {
 
-        for (int i = 1; i < 2; i++) {
+        for (int i = 1; i <= 25; i++) {
             URL url = this.getClass().getClassLoader().getResource(String.format("%s/input/%03d.json", EXO, i));
 
             System.out.println("-------------------------------------------------------------");
@@ -36,8 +37,8 @@ public class Exo1 {
 
     }
 
-    Moves getBestResponse(GameInput input) {
-        AI ai = new BasicBFS();
+    private Moves getBestResponse(GameInput input) {
+        AI ai = new AI002AttackNearestMonster(input.getNumTurns());
         return ai.getBestResponse(input);
     }
     

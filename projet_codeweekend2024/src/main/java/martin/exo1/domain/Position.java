@@ -10,9 +10,9 @@ public record Position(int x, int y) {
         if (isInRange(target, speed)) {
             return target;
         }
-        int distance = (int) Math.sqrt(quickDistanceTo(target));
-        int deltaX = ((target.x - x) * speed) / distance;
-        int deltaY = ((target.y - y) * speed) / distance;
+        double distance = Math.hypot(x - target.x, y - target.y);
+        int deltaX = (int) ((target.x - x) * speed / distance);
+        int deltaY = (int) ((target.y - y) * speed / distance);
         return new Position(x + deltaX, y + deltaY);
     }
 

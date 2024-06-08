@@ -16,6 +16,17 @@ public class Hero {
         this.range = range;
     }
 
+    public Hero(Hero hero, Position position, Monster monster) {
+        this.speed = hero.speed;
+        this.power = hero.power;
+        this.range = hero.range;
+        this.position = position;
+        this.exp = hero.exp + monster.exp();
+        this.gold = hero.gold + monster.gold();
+        this.level = hero.level;
+        levelUp();
+    }
+
     public Position getPosition() {
         return position;
     }
@@ -40,8 +51,10 @@ public class Hero {
         return level;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public void levelUp() {
+        while (exp >= LevelUtils.getExpRequiredForLevelUp(level + 1)) {
+            level++;
+        }
     }
 
     public int getExp() {

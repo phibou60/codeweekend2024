@@ -1,42 +1,43 @@
 package martin.exo1.domain;
 
+import commons.model.Action;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameState {
 
-    private final Position limit;
-    private final int timeLimit;
-    private Hero hero;
+    private final Hero hero;
     private final List<Monster> monsters;
+    private final List<Action> actions;
 
-    public GameState(Position limit, int timeLimit, Hero hero, List<Monster> monsters) {
-        this.limit = limit;
-        this.timeLimit = timeLimit;
+    public GameState(Hero hero, List<Monster> monsters) {
+        this(hero, monsters, new ArrayList<>());
+    }
+
+    public GameState(Hero hero, List<Monster> monsters, List<Action> actions) {
         this.hero = hero;
         this.monsters = monsters;
+        this.actions = actions;
     }
 
     public int getScore() {
         return hero.getGold();
     }
 
-    public Position getLimit() {
-        return limit;
-    }
-
-    public int getTimeLimit() {
-        return timeLimit;
+    public int getEllapsedTime() {
+        return actions.size();
     }
 
     public Hero getHero() {
         return hero;
     }
 
-    public void setHero(Hero hero) {
-        this.hero = hero;
-    }
-
     public List<Monster> getMonsters() {
         return monsters;
+    }
+
+    public List<Action> getActions() {
+        return actions;
     }
 }
