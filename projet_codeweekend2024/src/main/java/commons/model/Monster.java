@@ -17,6 +17,8 @@ public class Monster {
     private int hp;
     private int exp;
     private int gold;
+    private int range;
+    private int attack;
 
     public int getX() {
         return x;
@@ -56,5 +58,21 @@ public class Monster {
 
     public void setGold(int gold) {
         this.gold = gold;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
+    }
+
+    public int getAttack() {
+        return attack;
+    }
+
+    public void setAttack(int attack) {
+        this.attack = attack;
     }
 }
