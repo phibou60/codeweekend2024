@@ -3,10 +3,9 @@ package martin;
 import java.net.URL;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import commons.model.Attack;
 import commons.model.GameInput;
-import commons.model.Move;
 import commons.model.Moves;
+import martin.exo1.BasicBFS;
 
 public class Exo1 {
     private static final String EXO = "exo1";
@@ -38,11 +37,8 @@ public class Exo1 {
     }
 
     Moves getBestResponse(GameInput input) {
-        Moves response = new Moves();
-        response.getMoves().add(new Move(60, 50));
-        response.getMoves().add(new Attack(0));
-        response.setScore(10);
-        return response;
+        AI ai = new BasicBFS();
+        return ai.getBestResponse(input);
     }
     
 }
