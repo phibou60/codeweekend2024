@@ -17,7 +17,7 @@ public class GameState {
 
     public GameState(Hero hero, List<Monster> monsters, List<Action> actions) {
         this.hero = hero;
-        this.monsters = monsters;
+        this.monsters = new ArrayList<>(monsters);
         this.actions = actions;
     }
 

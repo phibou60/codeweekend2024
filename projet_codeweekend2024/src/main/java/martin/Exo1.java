@@ -5,8 +5,7 @@ import java.net.URL;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.model.GameInput;
 import commons.model.Moves;
-import martin.exo1.AI001BasicBFS;
-import martin.exo1.AI002AttackNearestMonster;
+import martin.exo1.AI003AttackMonsterWithBestGoldPerTurnRatio;
 
 public class Exo1 {
     private static final String EXO = "exo1";
@@ -38,7 +37,7 @@ public class Exo1 {
     }
 
     private Moves getBestResponse(GameInput input) {
-        AI ai = new AI002AttackNearestMonster(input.getNumTurns());
+        AI ai = new AI003AttackMonsterWithBestGoldPerTurnRatio(input.getNumTurns());
         return ai.getBestResponse(input);
     }
     

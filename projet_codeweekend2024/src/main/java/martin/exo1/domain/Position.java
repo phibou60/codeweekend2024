@@ -10,7 +10,7 @@ public record Position(int x, int y) {
         if (isInRange(target, speed)) {
             return target;
         }
-        double distance = Math.hypot(x - target.x, y - target.y);
+        double distance = distanceTo(target);
         int deltaX = (int) ((target.x - x) * speed / distance);
         int deltaY = (int) ((target.y - y) * speed / distance);
         return new Position(x + deltaX, y + deltaY);
@@ -18,5 +18,9 @@ public record Position(int x, int y) {
 
     public int quickDistanceTo(Position another) {
         return (x - another.x) * (x - another.x) + (y - another.y) * (y - another.y);
+    }
+
+    public double distanceTo(Position target) {
+        return Math.hypot(x - target.x, y - target.y);
     }
 }
