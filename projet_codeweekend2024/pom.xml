@@ -21,7 +21,14 @@
         
     </properties>
 
-    <dependencies>  
+    <dependencies>
+
+        <!-- serialisaiton / deserialsaiotn JSON -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.16.0</version>
+        </dependency>
 
 		<!-- LOG4J : https://mvnrepository.com/artifact/org.apache.logging.log4j -->
         <dependency>
