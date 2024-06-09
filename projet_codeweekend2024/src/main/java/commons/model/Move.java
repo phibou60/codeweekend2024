@@ -41,4 +41,10 @@ public class Move implements Action {
     public void setTargetY(int targetY) {
         this.targetY = targetY;
     }
+
+    @Override
+    public String toString() {
+        return "Move [targetX=" + targetX + ", targetY=" + targetY + "]";
+    }
+    
 }

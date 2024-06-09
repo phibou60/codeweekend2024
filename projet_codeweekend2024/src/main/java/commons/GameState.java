@@ -31,19 +31,21 @@ public class GameState {
         
         char[][] board = new char[height][width];
         
-        int x = (int) Math.round(input.getStartX() / scale);
-        int y = (int) Math.round(input.getStartY() / scale);
-        
-        board[y][x] = 'X';
-        
         char[] chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
         
+        int x, y;
+        
         for (int i = 0; i < input.getMonsters().size(); i++) {
-            x = (int) Math.round(input.getMonsters().get(i).getX() / scale);
-            y = (int) Math.round(input.getMonsters().get(i).getY() / scale);
+            x = Math.min(width -1, (int) Math.round(input.getMonsters().get(i).getX() / scale));
+            y = Math.min(height -1, (int) Math.round(input.getMonsters().get(i).getY() / scale));
             
-            board[y][x] = chars[i];
+            board[y][x] = i < chars.length ? chars[i] : '#';
         }
+        
+        x = Math.min(width -1, (int) Math.round(input.getStartX() / scale));
+        y = Math.min(height -1, (int) Math.round(input.getStartY() / scale));
+        
+        board[y][x] = 'X';
         
         String border = "";
         for (x = 0; x < width; x++) border += "--";

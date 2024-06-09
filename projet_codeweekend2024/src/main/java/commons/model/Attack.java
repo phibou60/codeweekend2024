@@ -29,4 +29,9 @@ public class Attack implements Action {
     public void setTargetId(int targetId) {
         this.targetId = targetId;
     }
+
+    @Override
+    public String toString() {
+        return "Attack [targetId=" + targetId + "]";
+    }
 }

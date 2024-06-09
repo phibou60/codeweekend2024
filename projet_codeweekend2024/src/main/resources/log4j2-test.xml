@@ -1,0 +1,19 @@
+<Configuration status="warn">
+    <Appenders>
+        <!-- Console appender configuration -->
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout
+                pattern="%d{HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <!-- Root logger referring to console appender -->
+        <Root level="info" additivity="false">
+            <AppenderRef ref="console" />
+        </Root>
+        <Logger name="philippe.Coords" level="trace"/>
+        <Logger name="philippe.Exo1" level="debug"/>
+        <Logger name="philippe.PhilGameState" level="debug"/>
+        
+    </Loggers>
+</Configuration>

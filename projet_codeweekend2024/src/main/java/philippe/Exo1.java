@@ -1,56 +1,139 @@
 package philippe;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import commons.GameState;
-import commons.Response;
+import commons.model.Action;
+import commons.model.Attack;
+import commons.model.GameInput;
+import commons.model.Monster;
+import commons.model.Move;
+import commons.model.Moves;
 
 public class Exo1 {
+    private static final Logger LOGGER = LogManager.getLogger();
+    
     private static final String EXO = "exo1";
     private static final String DEV = "philippe";
     
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    
     public static void main(String[] args) throws Exception {
-        new Exo1().run();
+        try {
+            new Exo1().run();
+        } catch (Exception e) {
+            LOGGER.throwing(e);
+        }
     }
     
     public void run() throws Exception {
+        
+        int totalScore = 0;
+        
+        for (int i = 1; i <= 1; i++) {
+            URL url = this.getClass().getClassLoader().getResource(String.format("%s/input/%03d.json", EXO, i));
 
-        for (int i = 1; i <= 2; i++) {
-            URI uri = this.getClass().getClassLoader().getResource(EXO + "/input/" + i + ".txt").toURI();
-            List<String> input = Files.readAllLines(Paths.get(uri), Charset.defaultCharset());
+            LOGGER.info("-------------------------------------------------------------");
+            LOGGER.info("Test case " + i + ":");
 
-            System.out.println("-------------------------------------------------------------");
-            System.out.println("Test case " + i + ":");
-            System.out.println(input);
+            GameInput input = JSON_MAPPER.readValue(url, GameInput.class);
+            if (LOGGER.isDebugEnabled()) GameState.printGameInput(input, 20);
             
-            GameState gameState = GameState.parse(input);
-            Response response = getBestResponse(gameState);
+            Moves response = getBestResponse(input);
 
-            // TODO : écrire le résultat quelque part sur disque
-            
-            System.out.println("Soumission :");
-            response.getSubmission().forEach(System.out::println);
-            
-            System.out.println("Score : " + response.getScore());
+            String submission = JSON_MAPPER.writeValueAsString(response);
+            LOGGER.debug("Soumission :\n" + submission);
+            LOGGER.info("Score :" + response.getScore());
+            totalScore += response.getScore();
         }
-
+        LOGGER.info("Total Score :" + totalScore);
     }
 
-    Response getBestResponse(GameState gameState) {
+    Moves getBestResponse(GameInput input) {
+        Moves response = new Moves();
+        List<Action> moves = response.getMoves();
         
-        List<String> submission = new ArrayList<>();
-        submission.add("nb lines: " + gameState.lines.size());
-        int score = gameState.lines.size();
+        double[][] distances = GetDistanceMatrix.calculate(input);
+        TSProblem tsProblem = new TSProblem(distances);
+         
+        SalesmanGlouton sg = new SalesmanGlouton(tsProblem);
+ 
+        LOGGER.debug("---------Solution SalesmanGlouton:");
+        int[] solutionGlouton = sg.getMeilleurSolution();
+        LOGGER.debug(Arrays.toString(solutionGlouton));
+        LOGGER.debug("distance: " + sg.distSoluce);
+        LOGGER.debug("check distance: " + SalesmanTools.getDistance(tsProblem, solutionGlouton));
+
+        System.out.println("---------Amélioration 2 OPT:");
         
-        return new Response(submission, score);
+        Salesman2Opt s2opt = new Salesman2Opt(tsProblem, solutionGlouton);
+        
+        int[] solution = s2opt.getMeilleurSolution(System.nanoTime() + 2_000_000L);
+        System.out.println(Arrays.toString(solution));
+        System.out.println("distance2: " + s2opt.distSoluce);
+        System.out.println("nbUpdates: " + s2opt.nbUpdates);
+        
+        PhilGameState gameState = new PhilGameState(input);
+        
+        int targetRank = 1;
+        int target = solution[targetRank] - 1;
+        
+        for (int turn = 1; turn <= input.getNumTurns(); turn++) {
+            LOGGER.debug("---- TURN {}", turn);
+            double dist = getDistanceToTarget(target, input, gameState);
+            LOGGER.debug("> target: {}, dist: {}", target, dist);
+            Action action = null;
+            
+            // Si on est assez près on tir
+            
+            if (dist <= gameState.range) {
+                action = new Attack(target);
+                gameState.play(action);
+                
+                LOGGER.debug("> hp ?: {}", gameState.hps[target]);
+                
+                // Si le monstre est tué, on change de target
+                if (gameState.hps[target] <= 0) {
+                    LOGGER.debug("Next monster");
+                    targetRank++;
+                    target = solution[targetRank] - 1;
+                    if (target == 0) break; 
+                }
+            
+            // Si on est trop loin, on avance vers lui
+                
+            } else {
+                Coords coords = getPointToTarget(target, input, gameState);
+                action = new Move((int) Math.floor(coords.x), (int) Math.floor(coords.y));
+                gameState.play(action);
+            }
+            
+            moves.add(action);
+         }
+        
+        response.setScore(gameState.gold);
+        
+        return response;
+    }
+
+    private double getDistanceToTarget(int target, GameInput input, PhilGameState gameState) {
+        return Math.hypot(gameState.x - input.getMonsters().get(target).getX(), 
+                gameState.y - input.getMonsters().get(target).getY());
+    }
+
+    private Coords getPointToTarget(int target, GameInput input, PhilGameState gameState) {
+        Monster m = input.getMonsters().get(target);
+        Coords mCoords = new Coords(m.getX(), m.getY());
+        Coords hCoords = new Coords(gameState.x, gameState.y);
+        
+        return hCoords.getPointVers(mCoords, gameState.speed);
     }
     
 }
