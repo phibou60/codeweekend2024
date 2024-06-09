@@ -16,7 +16,7 @@ import commons.model.Move;
 class PhilGameStateTest {
 
     @Test
-    void testPlay() throws JsonMappingException, JsonProcessingException {
+    void test_play() throws JsonMappingException, JsonProcessingException {
         String json = """
         {
         "hero": {
@@ -78,9 +78,19 @@ class PhilGameStateTest {
         PhilGameState gameState = new PhilGameState(input);
         gameState.play(new Move(15, 18));
         gameState.play(new Attack(5));
-        
-        
-        
     }
 
+
+    @Test
+    void test_getLevel() {
+        assertEquals(0, PhilGameState.getLevel(0));
+        assertEquals(0, PhilGameState.getLevel(900));
+        assertEquals(1, PhilGameState.getLevel(1_000));
+        assertEquals(1, PhilGameState.getLevel(2_000));
+        assertEquals(2, PhilGameState.getLevel(2_100));
+        assertEquals(2, PhilGameState.getLevel(2_500));
+        assertEquals(3, PhilGameState.getLevel(3_400));
+        assertEquals(3, PhilGameState.getLevel(3_500));
+    }
+    
 }

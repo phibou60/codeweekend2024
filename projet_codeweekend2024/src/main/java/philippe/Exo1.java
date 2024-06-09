@@ -110,7 +110,10 @@ public class Exo1 {
             // Si on est trop loin, on avance vers lui
                 
             } else {
-                Coords coords = getPointToTarget(target, input, gameState);
+                //Coords coords = gameState.getPointToTarget(target, input, gameState);
+                Monster m = input.getMonsters().get(target);
+                Coords mCoords = new Coords(m.getX(), m.getY());
+                Coords coords = gameState.getPointVers(mCoords, gameState.speed);
                 action = new Move((int) Math.floor(coords.x), (int) Math.floor(coords.y));
                 gameState.play(action);
             }

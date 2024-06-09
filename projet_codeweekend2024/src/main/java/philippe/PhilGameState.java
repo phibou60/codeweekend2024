@@ -11,6 +11,17 @@ import commons.model.Move;
 public class PhilGameState {
     private static final Logger LOGGER = LogManager.getLogger();
     
+    private static final int[] XP_LEVELS = new int[100];
+    static {
+        XP_LEVELS[0] = 1_000; XP_LEVELS[1] = 1_100; XP_LEVELS[2] = 1_300; XP_LEVELS[3] = 1_600; ; XP_LEVELS[4] = 2_000;
+        int prev = 2_000;
+        for (int i = 5; i < 100; i++) {
+            int L = i + 1;
+            XP_LEVELS[i] = 1000 + L * (L - 1) * 50;
+            LOGGER.trace("XP_LEVELS[{}] = {}", L, XP_LEVELS[i]);
+        }
+    }
+    
     GameInput gameInput;
     int turn;
     
@@ -22,6 +33,7 @@ public class PhilGameState {
     int range;
     int[] hps;
 
+    int level;
     int gold;
     int xp;
     
@@ -92,12 +104,15 @@ public class PhilGameState {
             xp += gameInput.getMonsters().get(i).getExp();
             
             LOGGER.debug(" > killed! hp : {}, gold: {}, xp: {}", hps[i], gold, xp);
+            if (level != getLevel(xp)) {
+                LOGGER.debug(" > level up: level : {}, speed: {}, range: {}, power: {}", level, speed, range, power);
+            }
         }
 
     }
     
     public Coords getPointVers(Coords point2, double speed) {
-        LOGGER.trace("getPointVers: de: {}, vers: {}, speed: {}", this, point2, speed);
+        LOGGER.trace("getPointVers: de: {}, vers: {}, speed: {}", x + ", " + y, point2, speed);
         double dist = distance(point2);
         if (dist <= speed) {
             return point2;
@@ -118,4 +133,17 @@ public class PhilGameState {
         return Math.hypot(x - c2.x, y - c2.y);
     }
 
+    public static int getLevel(int xp) {
+        int level = 0;
+        int sum = 0;
+        for (int i = 0; i < 100; i++) {
+            sum += XP_LEVELS[i];
+            if (xp < sum) {
+                level = i;
+                break;
+            }
+        }
+        return level;
+    }
+    
 }
